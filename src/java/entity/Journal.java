@@ -13,7 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 /**
  *
- * @author User
+ * @author Dilerom
  */
 @Entity
 public class Journal implements Serializable {
@@ -29,7 +29,7 @@ public class Journal implements Serializable {
     
     public Journal(){}
     
-    public Journal(Product p, Client c){ // прописали, что должен делать конструктор при обращении к нему в Deal
+    public Journal(Product p, Client c, Date takeOnDate){ // прописали, что должен делать конструктор при обращении к нему в Deal
         this.client = c;  
         this.product = p;
         this.takeOnDate = new Date();

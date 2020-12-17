@@ -13,6 +13,7 @@
     </head>
     <body>
         <h1>Добавить мебель</h1>
+         
         <p>${info}</p> 
         
         <a href="index.jsp">На главную</a><br><br>

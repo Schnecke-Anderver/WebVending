@@ -5,6 +5,7 @@
  */
 package entity;
 
+import static entity.Journal_.id;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -22,17 +23,26 @@ public class Product implements Serializable { // implements Serializable - сп
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     private String name;
-    private Double price;
+    private Integer price;
     private Integer quantity;
     
      public Product(){    //конструктор
     }
     
-    public Product(String name, Double price, Integer quantity) { // сделали конструктор через Insert code - Konstruktor
+    public Product(String name, Integer price, Integer quantity) {
+        
         this.name = name;
         this.price = price;
-        this.setQuantity(quantity); //это часть проверки, сразу сверяемся с количеством товара
+        this.quantity = quantity; 
     }   
+
+    public Long getId() {
+        return Id;
+    }
+
+    public void setId(Long Id) {
+        this.Id = Id;
+    }
     
        public String getName() { // создали конструкцию getter-setter через Insert code
         return name;
@@ -42,11 +52,11 @@ public class Product implements Serializable { // implements Serializable - сп
         this.name = name;
     }
 
-    public Double getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
@@ -55,9 +65,6 @@ public class Product implements Serializable { // implements Serializable - сп
     }
         
     public void setQuantity(Integer quantity) {
-        if(quantity <= 0){ // proverka на правильность введенного количества товара. 
-            return;       // Пригодиться, когда буду писать операцию добавления не товара целиком, а только его количества.
-        }
         this.quantity = quantity;
     }  
 
@@ -103,13 +110,7 @@ public class Product implements Serializable { // implements Serializable - сп
         }
         return true;
     }
-    /*
-     public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }*/
+    
+    
 }   
 

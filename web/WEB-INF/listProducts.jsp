@@ -14,6 +14,7 @@
     </head>
     <body>
         <h1>Мы предлагаем:</h1>
+         <a href="index.jsp">На главную</a><br><br>
         <ul>
             <c:forEach var="product" items="${listProducts}" varStatus="status">
                 <li>

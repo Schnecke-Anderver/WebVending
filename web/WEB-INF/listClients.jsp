@@ -14,6 +14,7 @@
     </head>
     <body>
         <h1>Наши клиенты:</h1>
+         <a href="index.jsp">На главную</a><br><br>
         <ul>
             <c:forEach var="client" items="${listClients}" varStatus="status">
                 <li>
@@ -21,5 +22,6 @@
                 </li>
             </c:forEach>
         </ul>
+        
     </body>
 </html>

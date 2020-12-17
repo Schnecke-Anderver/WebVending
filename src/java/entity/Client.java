@@ -14,7 +14,7 @@ import javax.persistence.Id;
 
 /**
  *
- * @author User
+ * @author Dilerom
  */
 @Entity
 public class Client implements Serializable {    
@@ -22,20 +22,28 @@ public class Client implements Serializable {
 // обратный процесс назыв. маршализация - из байтов собирается объект 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long Id;
+        private Long id;
         private String firstname;                
         private String lastname;
         private String phone;
-        private Double cash;
+        private Integer cash;
         
          public Client() {
         }
-        public Client(String firstname, String lastname, String phone, Double cash) {
+         
+        public Client(String firstname, String lastname, String phone, Integer cash) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.phone = phone;
         this.cash = cash;
-    }
+        }
+        
+        public Client(String firstname, String lastname, String phone, String cash) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.phone = phone;
+        setCash(cash);
+        }
         
       public String getFirstname() {
         return firstname;
@@ -61,12 +69,24 @@ public class Client implements Serializable {
         this.phone = phone;
     }
 
-    public Double getCash() {
+    public Integer getCash() {
         return cash;
     } 
-    public void setCash(Double cash) {
+    public void setCash(Integer cash) {
         this.cash = cash;
     }
+    
+      public void setCash(String cash) {
+        try {
+            Integer cashInt = Integer.parseInt(cash);
+            this.cash = cashInt;
+            System.out.println("Строка "+cash+" успешно преобразована в число.");
+        } catch (Exception e) {
+            System.out.println("Введены не цифры. Поле не изменено");
+        }
+        
+      }
+    
     @Override
     public String toString() {
     return "Client{" 
@@ -114,6 +134,7 @@ public class Client implements Serializable {
         }
         return true;
     }
+
     public Long getId() {
         return id;
     }
@@ -121,4 +142,6 @@ public class Client implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+   
 }

@@ -15,7 +15,9 @@
         <h1>Добро пожаловать в наш магазин мягкой мебели!</h1> <br>
         <p>${info}</p>      <br>   
         <a href="addProduct">Добавить продукт</a> <br><br>
-        <a href="listProduct">Перечень всей продукции</a> <br><br>
+        <a href="listProducts">Перечень всей продукции</a> <br><br>
         <a href="listClients">Список клиентов</a> <br><br>
+        <a href="addClient">Добавить клиента</a> <br><br>
+        <a href="saleOfProductForm">Сделка</a> <br><br>
     </body>
 </html>

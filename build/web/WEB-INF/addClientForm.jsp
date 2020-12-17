@@ -15,7 +15,8 @@
         <h1>Пополнить список клиентов</h1>
         <p>${info}</p> 
         <a href="index.jsp">На главную</a><br><br>
-        <form action="createProduct" method="POST">
+        
+        <form action="createClient" method="POST">
         Имя клиента: <input type="text" name="firstname" value="${firstname}"><br><br>
         Фамилия клиента: <input type="text" name="lastname" value="${lastname}"><br><br>
         Телефон: <input type="text" name="phone" value="${phone}"><br><br>
