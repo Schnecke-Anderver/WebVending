@@ -1,10 +1,11 @@
+package servlets;
+
 import entity.Client;
 import entity.Journal;
 import entity.User;
 import entity.Product;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.GregorianCalendar;
+import static java.lang.Integer.parseInt;
 import javax.ejb.EJB;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -16,17 +17,18 @@ import javax.servlet.http.HttpSession;
 import session.ClientFacade;
 import session.JournalFacade;
 import session.ProductFacade;
+import session.UserRolesFacade;
 
 /**
  *
  * @author Dilerom
  */
 @WebServlet(name = "/ManagerServlet", urlPatterns = {
-    "/addProduct",
+    "/addProductForm",
     "/createProduct",    
     "/editProductForm",
     "/editProduct",
-    "/listClients",
+   
 })
 public class ManagerServlet extends HttpServlet {
     @EJB
@@ -35,6 +37,7 @@ public class ManagerServlet extends HttpServlet {
     private ClientFacade clientFacade;
     @EJB
     private JournalFacade journalFacade;
+    @EJB private UserRolesFacade userRolesFacade;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -61,7 +64,8 @@ public class ManagerServlet extends HttpServlet {
             request.getRequestDispatcher("/loginForm").forward(request, response);
             return;
         }
-        if(!"ivan".equals(authUser.getLogin())){
+        boolean isRole = userRolesFacade.isRole("MANAGER",authUser);
+        if(!isRole){
             request.setAttribute("info", "У вас нет прав для доступа!");
             request.getRequestDispatcher("/loginForm").forward(request, response);
             return;
@@ -73,12 +77,12 @@ public class ManagerServlet extends HttpServlet {
         String path = request.getServletPath();
         switch (path) {
             case "/addProduct":
-                request.getRequestDispatcher("/WEB-INF/addProductForm.jsp").forward(request, response);
+               request.getRequestDispatcher("/WEB-INF/addProductForm.jsp").forward(request, response);
                 break;
             case "/createProduct":
                 String name = request.getParameter("name");
                 String price = request.getParameter("price");
-                String quantity = request.getParameter("quantity");            
+                String quantity = request.getParameter("quantity");  
                 if("".equals(name) || name == null
                             || "".equals(price) || price == null
                             || "".equals(quantity) || quantity == null){
@@ -86,7 +90,7 @@ public class ManagerServlet extends HttpServlet {
                         request.setAttribute("price", price);
                         request.setAttribute("quantity", quantity);
                         request.setAttribute("info", "Заполните все поля.");            
-                request.getRequestDispatcher("/WEB-INF/addBookForm.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/addProductForm.jsp").forward(request, response);
                 break;
             }
             product = new Product(name,Integer.parseInt(price), Integer.parseInt(quantity));
@@ -107,29 +111,25 @@ public class ManagerServlet extends HttpServlet {
                 name = request.getParameter("name");
                 price = request.getParameter("price");
                 quantity = request.getParameter("quantity");
+                
                 if("".equals(name) || name == null
                         || "".equals(price) || price == null
-                        || "".equals(publishedYear) || publishedYear == null){
+                        || "".equals(quantity) || quantity == null){
                     request.setAttribute("info", "Поля не должны быть пустыми");
                     request.getRequestDispatcher("/editProductForm").forward(request, response);
                     break;
                 }
                 product = productFacade.find(Long.parseLong(productId));
                 product.setName(name);
-                product.setAuthor(author);
-                product.setPublishedYear(publishedYear);
-                productFacade.edit(book);
+                product.setPrice(price);
+                product.setQuantity(quantity);
+                productFacade.edit(product);
                 request.setAttribute("productId", productId);
-                request.setAttribute("info", "Книга отредактирована");
+                request.setAttribute("info", "Запись отредактирована");
                 request.getRequestDispatcher("/editProductForm").forward(request, response);
                 break;
       
-            case "/listClients":
-                List<Client> listClients = clientFacade.findAll();
-                request.setAttribute("listClients", listClients);
-                request.getRequestDispatcher("/WEB-INF/listClients.jsp").forward(request, response);
-                break;                 
-           
+                    
         }       
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

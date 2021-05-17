@@ -29,4 +29,5 @@ public class JournalFacade extends AbstractFacade<Journal> {
         super(Journal.class);
     }
     
+   
 }

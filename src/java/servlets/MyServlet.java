@@ -22,10 +22,12 @@
  *    указанный объект в поле.  
  * 
  */
+package servlets;
 
 import entity.Client;
 import entity.Journal;
 import entity.User;
+import session.UserFacade;
 import entity.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,20 +43,19 @@ import javax.servlet.http.HttpSession;
 import session.ClientFacade;
 import session.JournalFacade;
 import session.ProductFacade;
+import session.UserRolesFacade;
 
 /**
  *
  * @author Dilerom
  */
 @WebServlet(name = "/MyServlet", urlPatterns = {
-   // "/addProduct",
-   // "/createProduct",
-    "/listProducts",
-   // "/addClient",
-  //  "/createClient",
-    //"/listClients",
+  
+    "/listProducts",  
     "/saleOfProductForm",
-    "/saleOfProduct"
+    "/saleOfProduct",
+    "/profileForm",
+    "/setNewProfile",
 })
 public class MyServlet extends HttpServlet {
     @EJB
@@ -63,6 +64,8 @@ public class MyServlet extends HttpServlet {
     private ClientFacade clientFacade;
     @EJB
     private JournalFacade journalFacade;
+    @EJB private UserRolesFacade userRolesFacade;
+    @EJB private UserFacade userFacade;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -89,6 +92,14 @@ public class MyServlet extends HttpServlet {
             request.getRequestDispatcher("/loginForm").forward(request, response);
             return;
         }
+        
+        boolean isRole = userRolesFacade.isRole("CLIENT",authUser);
+        if(!isRole){
+            request.setAttribute("info", "У вас нет прав для доступа!");
+            request.getRequestDispatcher("/loginForm").forward(request, response);
+            return;
+        }
+        
         Product product;
         Client client;
         Journal journal;
@@ -130,9 +141,8 @@ public class MyServlet extends HttpServlet {
             case "/saleOfProductForm":
                 listProducts = productFacade.findAll();
                 request.setAttribute("listProducts", listProducts);
-                List <Client> listClients = clientFacade.findAll();
-                
-                request.setAttribute("listClients", listClients);
+               // List <Client> listClients = clientFacade.findAll();                
+              //  request.setAttribute("listClients", listClients);
                 request.getRequestDispatcher("/WEB-INF/saleOfProductForm.jsp").forward(request, response);
                 break;
             case "/saleOfProduct":
@@ -142,12 +152,13 @@ public class MyServlet extends HttpServlet {
                     request.getRequestDispatcher("/saleOfProductForm").forward(request, response);
                 }
                 product = productFacade.find(Long.parseLong(productId));                
-                String clientId = request.getParameter("clientId");
+                //String clientId = request.getParameter("clientId");
+                Client client = authUser.getClient();
                 if("".equals(clientId) || clientId == null){
                     request.setAttribute("info", "Введите данные");
                     request.getRequestDispatcher("/saleOfProductForm").forward(request, response);
                 }
-                client = clientFacade.find(Long.parseLong(clientId)); 
+                //client = clientFacade.find(Long.parseLong(clientId)); 
                 String countStr = request.getParameter("count");
                 if("".equals(countStr) || countStr == null){
                     request.setAttribute("info", "Выберите количество");
@@ -173,8 +184,47 @@ public class MyServlet extends HttpServlet {
                 journal = new Journal(product, client, new GregorianCalendar().getTime());
 
                 journalFacade.create(journal);
-                request.setAttribute("info", "\"" + product.getName()+"\" выдан покупателю");
+                request.setAttribute("info", "\"" + product.getName()+"\" теперь у покупателя.");
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
+                break;
+                
+            case "/profileForm":
+                User user = userFacade.find(authUser.getId());
+                request.setAttribute("user",user);
+                request.getRequestDispatcher("/WEB-INF/profileForm.jsp").forward(request, response);
+                break;
+            case "/setNewProfile":
+                String userId = request.getParameter("userId");
+                String firstname = request.getParameter("firstname");
+                String lastname = request.getParameter("lastname");
+                String phone = request.getParameter("phone");
+                String password1 = request.getParameter("password1");
+                String password2 = request.getParameter("password2");
+                if(!password1.equals(password2)){
+                    request.setAttribute("info", "Не совпадают пароли");
+                    request.getRequestDispatcher("/profileForm").forward(request, response);
+                    break;
+                }
+                if("".equals(userId) || userId == null
+                        || "".equals(firstname) || firstname == null
+                        || "".equals(lastname) || lastname == null
+                        || "".equals(phone) || phone == null){
+                    request.setAttribute("info", "Заполните все поля");
+                    request.getRequestDispatcher("/profileForm").forward(request, response);
+                    break;
+                }
+                user = userFacade.find(Long.parseLong(userId));
+                client = clientFacade.find(user.getClient().getId());
+                if(!"".equals(password1)) user.setPassword(password1);
+                client.setFirstname(firstname);
+                client.setLastname(lastname);
+                client.setPhone(phone);
+                client.setCash(cash);
+                clientFacade.edit(client);
+                userFacade.edit(user);
+                httpSession.setAttribute("user", user);
+                request.setAttribute("info", "Профиль изменен");
+                request.getRequestDispatcher("/profileForm").forward(request, response);
                 break;
                                   
                

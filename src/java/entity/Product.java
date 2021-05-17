@@ -5,7 +5,6 @@
  */
 package entity;
 
-import static entity.Journal_.id;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -110,6 +109,26 @@ public class Product implements Serializable { // implements Serializable - сп
         }
         return true;
     }
+    public void setPrice(String price) {
+      try {
+          int priceInt = Integer.parseInt(price);
+          this.price = priceInt;
+          System.out.println("Строка "+price+" успешно преобразована в число.");
+      } catch (NumberFormatException e) {
+          System.out.println("Введены не цифры. Поле не изменено");
+      }
+
+  }
+      public void setQuantity(String quantity) {
+      try {
+          int quantityInt = Integer.parseInt(quantity);
+          this.quantity = quantityInt;
+          System.out.println("Строка "+quantity+" успешно преобразована в число.");
+      } catch (NumberFormatException e) {
+          System.out.println("Введены не цифры. Поле не изменено");
+      }
+
+  }
     
     
 }   

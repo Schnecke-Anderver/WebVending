@@ -6,13 +6,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Список клиентов</title>
-    </head>
-    <body>
+
         <h1>Наши клиенты:</h1>
          <a href="index.jsp">На главную</a><br><br>
         <ul>
@@ -22,6 +16,5 @@
                 </li>
             </c:forEach>
         </ul>
-        
-    </body>
-</html>
+         <p align="center"><a href="index.jsp">На главную</a></p>
+   

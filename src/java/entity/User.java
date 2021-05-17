@@ -22,26 +22,17 @@ public class User implements Serializable{
     @Column(unique=true)
     private String login;
     private String password;
-    private String role;
+    
     @OneToOne
     private Client client;
 
     public User() {
     }
 
-    public User(String login, String password, String role, Client client) {
+    public User(String login, String password, Client client) {
         this.login = login;
         this.password = password;
-        this.role = role;
         this.client = client;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getLogin() {
@@ -73,7 +64,6 @@ public class User implements Serializable{
         return "User{" 
                 + "login=" + login 
                 + ", password=" + password 
-                + ", role=" + role 
                 + ", client=" + client.getFirstname()
                 + " " + client.getLastname()
                 + '}';
@@ -84,7 +74,6 @@ public class User implements Serializable{
         int hash = 5;
         hash = 19 * hash + Objects.hashCode(this.login);
         hash = 19 * hash + Objects.hashCode(this.password);
-        hash = 19 * hash + Objects.hashCode(this.role);
         hash = 19 * hash + Objects.hashCode(this.client);
         return hash;
     }
@@ -107,9 +96,7 @@ public class User implements Serializable{
         if (!Objects.equals(this.password, other.password)) {
             return false;
         }
-        if (!Objects.equals(this.role, other.role)) {
-            return false;
-        }
+       
         if (!Objects.equals(this.client, other.client)) {
             return false;
         }

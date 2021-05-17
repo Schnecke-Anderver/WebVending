@@ -18,12 +18,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import session.ClientFacade;
 import session.UserFacade;
-
+import entity.Role;
+import entity.UserRoles;
+import session.RoleFacade;
+import session.UserRolesFacade;
 /**
  *
  * @author Dilerom
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {
+@WebServlet(name = "LoginServlet", loadOnStartup = 1, urlPatterns = {
     "/loginForm", 
     "/login",
     "/logout",
@@ -35,6 +38,36 @@ public class LoginServlet extends HttpServlet {
     private UserFacade userFacade;
     @EJB
     private ClientFacade clientFacade;
+    
+    @EJB private RoleFacade roleFacade;
+    @EJB private UserRolesFacade userRolesFacade;
+
+    @Override
+    public void init() throws ServletException {
+        super.init(); 
+        if(userFacade.findAll().size() > 0) return;
+        //Client client = new Client("Olga", "Egorova", "12345678",);
+        //clientFacade.create(client);
+        User user = new User("admin", "12345", client);
+        userFacade.create(user);
+
+        Role role = new Role("ADMIN");
+        roleFacade.create(role);
+        UserRoles userRoles = new UserRoles(role, user);
+        userRolesFacade.create(userRoles);
+
+        role = new Role("MANAGER");
+        roleFacade.create(role);
+        userRoles = new UserRoles(role, user);
+        userRolesFacade.create(userRoles);
+
+        role = new Role("CLIENT");
+        roleFacade.create(role);
+        userRoles = new UserRoles(role, user);
+        userRolesFacade.create(userRoles);
+
+    }
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -51,7 +84,7 @@ public class LoginServlet extends HttpServlet {
         String path = request.getServletPath();
         switch (path) {
             case "/loginForm":
-                request.getRequestDispatcher("/loginForm.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
                 break;
             case "/login":
                 String login = request.getParameter("login");
@@ -59,17 +92,18 @@ public class LoginServlet extends HttpServlet {
                 User user = userFacade.findByLogin(login);
                 if(user == null){
                     request.setAttribute("info", "Неправильный логин или пароль");
-                    request.getRequestDispatcher("/loginForm").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/loginForm").forward(request, response);
                     break;
                 }
                 if(!password.equals(user.getPassword())){
                     request.setAttribute("info", "Неправильный логин или пароль");
-                    request.getRequestDispatcher("/loginForm").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/loginForm").forward(request, response);
                     break;
                 }
                 HttpSession httpSession = request.getSession(true);
                 httpSession.setAttribute("user", user);
                 request.setAttribute("info", "Вы вошли как " + user.getLogin());
+                request.setAttribute("active", "index");
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
                 break;
             case "/logout":
@@ -81,8 +115,10 @@ public class LoginServlet extends HttpServlet {
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
                 break;
             case "/registrationForm":
-                request.getRequestDispatcher("/WEB-INF/addClientForm.jsp").forward(request, response);
-                break;
+                request.setAttribute("active", "registration");
+                request.getRequestDispatcher("/WEB-INF/registrationForm.jsp").forward(request, response);
+                break;                
+                
             case "/registration":
                 String firstname = request.getParameter("firstname");
                 String lastname = request.getParameter("lastname");
@@ -102,13 +138,16 @@ public class LoginServlet extends HttpServlet {
                     request.setAttribute("cash", cash);
                     request.setAttribute("login", login);
                     request.setAttribute("info", "Заполните все поля");
-                    request.getRequestDispatcher("/WEB-INF/addReaderForm.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/registrationForm.jsp").forward(request, response);
                     break;
                 }
                 Client client = new Client(firstname, lastname, phone, cash);
                 clientFacade.create(client);
-                user = new User(login, password, "CLIENT", client);
+                user = new User(login, password, client);
                 userFacade.create(user);
+                Role role = roleFacade.findByName("CLIENT");
+                UserRoles userRoles = new UserRoles(role, user);
+                userRolesFacade.create(userRoles);
                 request.setAttribute("info", "Клиент \"" + client.getFirstname() +" "+ client.getLastname()+ "\" добавлен");
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
                 break;    

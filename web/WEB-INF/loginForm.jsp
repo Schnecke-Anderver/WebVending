@@ -1,24 +1,15 @@
-<%-- 
-    Document   : loginForm
-    Created on : May 7, 2021, 9:15:43 AM
-    Author     : pupil
---%>
+
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>SignIn</title>
-    </head>
-    <body>
-       <h1>Введите логин и пароль</h1>
-    <p>${info}</p>
-    <form action="login" method="POST">
-        Логин <input type="text" name="login" value=""><br>
-        Пароль <input type="password" name="password" value=""><br>
+
+        <p align="center"><img src="mebelny-Almeda.jpg" width="800px;" alt="Здесь должна быть иллюстрация главной страницы"/></p>        
+        <h1 align="center">Введите логин и пароль</h1> 
+    <p align="center">${info}</p>
+    <form action="login" method="POST" align="center">
+        Логин <input type="text" name="login" value=""><br><br>
+        Пароль <input type="password" name="password" value=""><br><br>
         <input type="submit" value="Войти"><br>
     </form>
-    Еще не с нами? <a href="registrationForm">Зарегистрироваться</a>
-  </body>
-</html>
+    <p align="center">Еще не с нами? <a href="registrationForm">Зарегистрироваться</a></p>
+    <p align="center"><a href="index.jsp" >На главную</a></p>
+ 
